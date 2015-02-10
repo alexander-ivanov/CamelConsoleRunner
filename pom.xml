@@ -20,12 +20,31 @@
     <artifactId>ConsoleRunner</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <properties>
+        <camel.version>2.14.1</camel.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
-            <version>2.14.1</version>
+            <version>${camel.version}</version>
         </dependency>
+
+        <!-- Only for spring runner -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-spring</artifactId>
+            <version>${camel.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring</artifactId>
+            <version>2.5.6</version>
+        </dependency>
+
+        <!-- End of spring -->
+
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
@@ -70,7 +89,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>com.complete.camel.console.ConsoleRunner</mainClass>
+                            <mainClass>com.complete.camel.console.SpringConsoleRunner</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
