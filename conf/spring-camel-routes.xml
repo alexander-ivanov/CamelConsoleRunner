@@ -1,15 +1,38 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:lang="http://www.springframework.org/schema/lang"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
+
+    <!-- inline a groovy script to use for the aggregator -->
+    <lang:groovy id="consoleAggregate">
+        <lang:inline-script>
+            class ConsoleAggregate {
+                String simpleAggregateMethod(String prev, String next) {
+                    return prev + " " + next
+                }
+            }
+        </lang:inline-script>
+    </lang:groovy>
 
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
         <route id="sample">
             <from uri="timer://foo?period=1s"/>
-            <to uri="log:sample"/>
+            <setHeader headerName="correlationHeader">
+                <simple>Timer</simple>
+            </setHeader>
+            <setBody>
+                <simple>TimerBody</simple>
+            </setBody>
+            <aggregate strategyRef="consoleAggregate" strategyMethodName="simpleAggregateMethod" completionSize="2">
+                <correlationExpression>
+                    <header>correlationHeader</header>
+                </correlationExpression>
+                <to uri="log:sample"/>
+            </aggregate>
         </route>
 
     </camelContext>
